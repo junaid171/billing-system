@@ -216,7 +216,7 @@ st.markdown("### ➕ Quick Entry")
 
 with st.form(key="billing_form", clear_on_submit=True):
     customer_name = st.text_input("Party Name", placeholder="e.g., Al-Fahad Textiles", max_chars=20)
-    product_item = st.selectbox("Select Item / Quality", ["Powder Coated Box (KGS)", "Grey Fabric (Cotton)", "Yarn 40s Count", "Ready Garments"])
+    product_item = st.text_input("Product / Item Name", placeholder="e.g., Grey Fabric (Cotton)", help="Enter the product or item name", max_chars=30)
     invoice_date = st.date_input("Invoice Date", value=pd.Timestamp.now().date())
     amount = st.number_input("Bill Amount (₹)", min_value=0, value=0, step=500, max_value=20000)
     payment_status = st.radio("Payment Type", ["Cash / Online Received (Sales)", "Udhaari / Pending"])
