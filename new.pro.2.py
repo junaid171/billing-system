@@ -104,19 +104,21 @@ def generate_simple_pro_pdf(name, item, inv_date, base_amt, tax_amt, total_amt, 
     buffer.seek(0)
     return buffer
 
-# Custom Interface CSS Styling (Hiding Streamlit Headers & Footers)
+# Custom Interface CSS Styling (Hiding All Streamlit UI Elements)
 st.markdown("""
     <style>
-    /* GitHub icon, Streamlit Header aur Main Menu hatane ke liye */
+    /* 1. Top Header, Menu, aur GitHub Fork hide karne ke liye */
     header, [data-testid="stHeader"] { visibility: hidden !important; height: 0px !important; }
-    footer { visibility: hidden !important; }
     #MainMenu { visibility: hidden !important; }
     
-    /* Niche wala Red Crown deploy button hatane ke liye */
-    .stAppDeployButton { display: none !important; }
+    /* 2. Niche wala "Hosted with Streamlit" poora Toolbar / Footer hatane ke liye */
+    footer { visibility: hidden !important; display: none !important; }
+    .stAppToolbar { display: none !important; visibility: hidden !important; height: 0px !important; }
     div[data-testid="stAppDeployButton"] { display: none !important; }
+    [data-testid="stNotification"] { display: none !important; }
     
-    .block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; padding-left: 12px !important; padding-right: 12px !important; }
+    /* Body and structure adjustments */
+    .block-container { padding-top: 1rem !important; padding-bottom: 2rem !important; padding-left: 12px !important; padding-right: 12px !important; }
     .mobile-title { text-align: center; background: linear-gradient(45deg, #00FFCC, #007bff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 22px; }
     .mobile-subtitle { text-align: center; color: var(--text-color); opacity: 0.6; font-size: 12px; margin-top: 4px; margin-bottom: 15px; }
     .mobile-card { background-color: var(--background-color); color: var(--text-color); border: 1px solid rgba(128, 128, 128, 0.2); padding: 14px; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05); margin-bottom: 12px; }
