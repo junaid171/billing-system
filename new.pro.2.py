@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import re
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
@@ -10,7 +9,7 @@ from reportlab.lib import colors
 
 # Page configuration
 st.set_page_config(
-    page_title="billing system",
+    page_title="S.A. Mobile Billing",
     page_icon="📲",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -50,7 +49,6 @@ def generate_simple_pro_pdf(name, item, inv_date, base_amt, tax_amt, total_amt, 
     
     styles = getSampleStyleSheet()
     
-    # Clean Font Styles
     title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=22, leading=26, textColor=colors.HexColor('#007bff'), alignment=1)
     sub_style = ParagraphStyle('Sub', parent=styles['Normal'], fontSize=10, leading=14, textColor=colors.gray, alignment=1)
     header_style = ParagraphStyle('Header', parent=styles['Normal'], fontSize=11, leading=15, fontName='Helvetica-Bold')
@@ -58,12 +56,10 @@ def generate_simple_pro_pdf(name, item, inv_date, base_amt, tax_amt, total_amt, 
     right_style = ParagraphStyle('RightText', parent=styles['Normal'], fontSize=11, leading=15, alignment=2)
     right_bold = ParagraphStyle('RightBold', parent=styles['Normal'], fontSize=11, leading=15, fontName='Helvetica-Bold', alignment=2)
     
-    # 1. Simple Top Title Header
-    story.append(Paragraph("<b>Tum Hari Company</b>", title_style))
+    story.append(Paragraph("<b>S.A. DIGITAL BILLING</b>", title_style))
     story.append(Paragraph("Bhiwandi Mobile Business Hub", sub_style))
     story.append(Spacer(1, 15))
     
-    # 2. Simple Meta Details (Bina Border Ki Clean Details)
     formatted_date = inv_date.strftime('%d-%b-%Y')
     meta_data = [
         [Paragraph(f"<b>Billed To (Party):</b> {name}", normal_style), Paragraph(f"<b>Date:</b> {formatted_date}", right_style)],
@@ -74,39 +70,33 @@ def generate_simple_pro_pdf(name, item, inv_date, base_amt, tax_amt, total_amt, 
     story.append(t_meta)
     story.append(Spacer(1, 15))
     
-    # 3. Professional Solid Column Table Layout
     is_gst = "5%" in gst_status
     cgst_sgst_val = tax_amt / 2 if is_gst else 0
     
     table_data = [
-        # Table Headers
         [Paragraph("<b>Sl No.</b>", header_style), Paragraph("<b>Item / Description</b>", header_style), Paragraph("<b>Base Amount (₹)</b>", right_bold)],
-        # Main Item Row
         [Paragraph("1", normal_style), Paragraph(f"{item}", normal_style), Paragraph(f"{base_amt:,.2f}", right_style)],
     ]
     
-    # Agar GST hai to CGST/SGST rows add karo, nahi to direct total
     if is_gst:
         table_data.append(["", Paragraph("CGST @ 2.5%", normal_style), Paragraph(f"{cgst_sgst_val:,.2f}", right_style)])
         table_data.append(["", Paragraph("SGST @ 2.5%", normal_style), Paragraph(f"{cgst_sgst_val:,.2f}", right_style)])
         
     table_data.append(["", Paragraph("<b>Grand Total:</b>", header_style), Paragraph(f"<b>₹ {total_amt:,.2f}</b>", right_bold)])
     
-    # Table Grid Styling (Tally jaisa tight black/gray grid lines look)
     t_items = Table(table_data, colWidths=[50, 350, 150])
     t_items.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#F8F9FA')), # Gray header background
-        ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#333333')), # Clean Solid Borders
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#F8F9FA')),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#333333')),
         ('PADDING', (0,0), (-1,-1), 8),
         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
     ]))
     story.append(t_items)
     story.append(Spacer(1, 30))
     
-    # 4. Clean Simple Sign-off Footer
-    story.append(Paragraph("<i>This is a mobile-generated invoice document.</i>", sub_style))
+    story.append(Paragraph("<i>This is a computer-generated invoice document.</i>", sub_style))
     story.append(Spacer(1, 15))
-    story.append(Paragraph("<b>For tumhari company ka name </b>", right_bold))
+    story.append(Paragraph("<b>For S.A. ELECTRICAL & AUTOMATION</b>", right_bold))
     story.append(Spacer(1, 30))
     story.append(Paragraph("Authorised Signatory", right_style))
     
@@ -114,10 +104,19 @@ def generate_simple_pro_pdf(name, item, inv_date, base_amt, tax_amt, total_amt, 
     buffer.seek(0)
     return buffer
 
-# Custom Interface CSS Styling
+# Custom Interface CSS Styling (Hiding Streamlit Headers & Footers)
 st.markdown("""
     <style>
-    .block-container { padding-top: 2.5rem !important; padding-bottom: 1rem !important; padding-left: 12px !important; padding-right: 12px !important; }
+    /* GitHub icon, Streamlit Header aur Main Menu hatane ke liye */
+    header, [data-testid="stHeader"] { visibility: hidden !important; height: 0px !important; }
+    footer { visibility: hidden !important; }
+    #MainMenu { visibility: hidden !important; }
+    
+    /* Niche wala Red Crown deploy button hatane ke liye */
+    .stAppDeployButton { display: none !important; }
+    div[data-testid="stAppDeployButton"] { display: none !important; }
+    
+    .block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; padding-left: 12px !important; padding-right: 12px !important; }
     .mobile-title { text-align: center; background: linear-gradient(45deg, #00FFCC, #007bff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 22px; }
     .mobile-subtitle { text-align: center; color: var(--text-color); opacity: 0.6; font-size: 12px; margin-top: 4px; margin-bottom: 15px; }
     .mobile-card { background-color: var(--background-color); color: var(--text-color); border: 1px solid rgba(128, 128, 128, 0.2); padding: 14px; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05); margin-bottom: 12px; }
@@ -133,7 +132,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- HEADER ---
-st.markdown("<h1 class='mobile-title'> JUNAID </h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='mobile-title'>JUNAID</h1>", unsafe_allow_html=True)
 st.markdown("<p class='mobile-subtitle'>Bhiwandi Mobile Business Hub</p>", unsafe_allow_html=True)
 st.write("---")
 
@@ -214,8 +213,8 @@ def process_and_save(name, final_amt, p_type):
 st.markdown("### ➕ Quick Entry")
 
 with st.form(key="billing_form", clear_on_submit=True):
-    customer_name = st.text_input("Party Name", placeholder="e.g., Al-Fahad Textiles", help="Enter the full name of the customer", max_chars=20)
-    product_item = st.text_input("Product / Item Name", placeholder="e.g., Grey Fabric (Cotton)", help="Enter the product or item name", max_chars=30)
+    customer_name = st.text_input("Party Name", placeholder="e.g., Al-Fahad Textiles", max_chars=20)
+    product_item = st.selectbox("Select Item / Quality", ["Powder Coated Box (KGS)", "Grey Fabric (Cotton)", "Yarn 40s Count", "Ready Garments"])
     invoice_date = st.date_input("Invoice Date", value=pd.Timestamp.now().date())
     amount = st.number_input("Bill Amount (₹)", min_value=0, value=0, step=500, max_value=20000)
     payment_status = st.radio("Payment Type", ["Cash / Online Received (Sales)", "Udhaari / Pending"])
@@ -229,8 +228,6 @@ if submit_button:
         st.error("Please enter a valid Party Name without numbers!")
     elif customer_name == "":
         st.error("Please enter a valid Party Name!")
-    elif product_item == "":
-        st.error("Please enter a valid Product / Item Name!")
     elif amount <= 0 or amount > 20000:
         st.error("Please enter a valid amount between ₹0 and ₹20,000!")
     else:
