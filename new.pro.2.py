@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # --- DATABASE LOGIC ---
-DATA_FILE = "billing_data.csv"
+DATA_FILE = "billing_system.csv"
 
 if not os.path.exists(DATA_FILE):
     df = pd.DataFrame([{"total_sales": 0, "pending_udhaari": 0}])
@@ -56,7 +56,7 @@ def generate_simple_pro_pdf(name, item, inv_date, base_amt, tax_amt, total_amt, 
     right_style = ParagraphStyle('RightText', parent=styles['Normal'], fontSize=11, leading=15, alignment=2)
     right_bold = ParagraphStyle('RightBold', parent=styles['Normal'], fontSize=11, leading=15, fontName='Helvetica-Bold', alignment=2)
     
-    story.append(Paragraph("<b>S.A. DIGITAL BILLING</b>", title_style))
+    story.append(Paragraph("<b>DIGITAL BILLING</b>", title_style))
     story.append(Paragraph("Bhiwandi Mobile Business Hub", sub_style))
     story.append(Spacer(1, 15))
     
